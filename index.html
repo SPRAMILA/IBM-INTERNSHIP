@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student CRUD App</title>
+</head>
+<body>
+
+<h2>Student CRUD</h2>
+
+<input id="name" placeholder="Name">
+<input id="dept" placeholder="Department">
+<input id="age" type="number" placeholder="Age">
+<button onclick="addStudent()">Add Student</button>
+
+<h3>Students List</h3>
+<ul id="list"></ul>
+
+<script>
+const API = "http://localhost:8000/students";
+
+function loadStudents() {
+  fetch(API)
+    .then(res => res.json())
+    .then(data => {
+      list.innerHTML = "";
+      data.forEach(s => {
+        list.innerHTML += `
+          <li>
+            ${s.name} - ${s.dept} - ${s.age}
+            <button onclick="deleteStudent(${s.id})">Delete</button>
+          </li>
+        `;
+      });
+    });
+}
+
+function addStudent() {
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: name.value,
+      dept: dept.value,
+      age: age.value
+    })
+  }).then(() => loadStudents());
+}
+
+function deleteStudent(id) {
+  fetch(`${API}/${id}`, { method: "DELETE" })
+    .then(() => loadStudents());
+}
+
+loadStudents();
+</script>
+
+</body>
+</html>
+   
